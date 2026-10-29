@@ -179,8 +179,64 @@ function showMessage(text) {
     .build();
 }
 
-function authorizeExternalRequest() {
-  UrlFetchApp.fetch(
-    "https://gmail-add-on-project.onrender.com/health"
-  );
+
+function analyzeCurrentEmail(e) {
+  const messageId = e.gmail && e.gmail.messageId;
+
+  if (!messageId || !e.gmail.accessToken) {
+    return showMessage(
+      "Could not access the opened email. Reopen it and try again."
+    );
+  }
+
+  GmailApp.setCurrentMessageAccessToken(e.gmail.accessToken);
+  const message = GmailApp.getMessageById(messageId);
+
+  if (!message) {
+    return showMessage("Could not read the opened email.");
+  }
+
+  const email = {
+    subject: message.getSubject() || "",
+    sender: message.getFrom() || "",
+    body: message.getPlainBody() || "",
+    attachments: message.getAttachments().map(function (a) {
+      return a.getName() || "";
+    })
+  };
+
+  const apiUrl = "https://gmail-add-on-project.onrender.com/analyze";
+
+  try {
+    const response = UrlFetchApp.fetch(apiUrl, {
+      method: "post",
+      contentType: "application/json",
+      payload: JSON.stringify(email),
+      muteHttpExceptions: true
+    });
+
+    const status = response.getResponseCode();
+
+    if (status !== 200) {
+      console.error(
+        "Scoring API returned HTTP " + status + ": " +
+        response.getContentText()
+      );
+
+      return showMessage(
+        "The scoring service returned an error (HTTP " +
+        status + "). Please try again."
+      );
+    }
+
+    const result = JSON.parse(response.getContentText());
+    return showAnalysisCard(email, result);
+
+  } catch (error) {
+    console.error("Scoring API request failed: " + error.message);
+
+    return showMessage(
+      "Could not contact the scoring service. Please try again."
+    );
+  }
 }
