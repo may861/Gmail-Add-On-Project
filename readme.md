@@ -28,6 +28,14 @@ Gmail-Add-On-Project/
 
 When a user opens an email in Gmail and clicks Analyze email, the add-on extracts the email's subject, sender, body, and attachment filenames and sends them to the Node.js/Express backend over HTTPS. The backend evaluates the email using predefined rules and returns a risk score, verdict, and explanations of the detected indicators.
 
+# How the evaluation works
+    1. Receives the email: The Gmail add-on sends the subject, sender, body, and attachment filenames to the backend.
+    2. Checks for suspicious indicators: The scorer looks for patterns such as urgent language, requests for passwords, financial requests, shortened URLs, unusual link destinations, and risky attachment extensions.
+    3. Adds risk points: Each detected indicator contributes a predefined number of points.
+    4. Calculates the final score: The points are added together, with the total capped at 100.
+    5. Returns a verdict and explanations: The backend returns the score, category, and findings explaining which rules were triggered.
+
+    
 ## Scoring Rules
 
 | Signal | Points |
