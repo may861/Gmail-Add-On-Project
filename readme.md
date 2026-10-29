@@ -24,6 +24,10 @@ Gmail-Add-On-Project/
 └── package-lock.json
 ```
 
+## How It Works
+
+When a user opens an email in Gmail and clicks Analyze email, the add-on extracts the email's subject, sender, body, and attachment filenames and sends them to the Node.js/Express backend over HTTPS. The backend evaluates the email using predefined rules and returns a risk score, verdict, and explanations of the detected indicators.
+
 ## Scoring Rules
 
 | Signal | Points |
