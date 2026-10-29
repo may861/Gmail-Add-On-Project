@@ -68,7 +68,7 @@ function scoreEmail(email) {
   }
 
   if (/\b(password|passcode|one-time code|verification code|login credentials)\b/i.test(text) &&
-      /\b(confirm|verify|send|share|provide|enter|reset)\b/i.test(text)) {
+    /\b(confirm|verify|send|share|provide|enter|reset)\b/i.test(text)) {
     add("credential_request", "Possible credential theft", 25,
       "Authentication-related terms appear alongside a request to take action.");
   }
@@ -88,7 +88,7 @@ function scoreEmail(email) {
       const host = new URL(rawUrl.replace(/[),.!?;]+$/g, "")).hostname.toLowerCase();
       if (shorteners.indexOf(host) !== -1) hasShortener = true;
       if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(host) ||
-          host.startsWith("xn--") || host.includes(".xn--")) {
+        host.startsWith("xn--") || host.includes(".xn--")) {
         hasUnusualHost = true;
       }
     } catch (err) {
@@ -233,10 +233,10 @@ function analyzeCurrentEmail(e) {
     return showAnalysisCard(email, result);
 
   } catch (error) {
-    console.error("Scoring API request failed: " + error.message);
+    console.error("Scoring API request failed: " + error.stack);
 
     return showMessage(
-      "Could not contact the scoring service. Please try again."
+      "Backend error: " + error.message.substring(0, 180)
     );
   }
 }
