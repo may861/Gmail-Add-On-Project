@@ -178,3 +178,9 @@ function showMessage(text) {
     .setNotification(CardService.newNotification().setText(text))
     .build();
 }
+
+function authorizeExternalRequest() {
+  UrlFetchApp.fetch(
+    "https://gmail-add-on-project.onrender.com/health"
+  );
+}
